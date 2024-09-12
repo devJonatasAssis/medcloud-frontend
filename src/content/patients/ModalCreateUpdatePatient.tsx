@@ -1,9 +1,9 @@
 import { DateInput } from '@/components/DateInput';
 import { PhoneInput } from '@/components/PhoneInput';
-import { Patient } from '@/models';
 import { Close } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -16,11 +16,22 @@ import {
 import { UseFormReturn } from 'react-hook-form';
 
 interface Props {
-  form: UseFormReturn<Patient>;
+  form: UseFormReturn;
+  onSubmit: () => void;
+  loading: boolean;
 }
 
-export const ModalCreateUpdatePatient = ({ form }: Props) => {
-  const { register, control } = form;
+export const ModalCreateUpdatePatient = ({
+  form,
+  onSubmit,
+  loading,
+}: Props) => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
   return (
     <Dialog open fullWidth>
@@ -40,52 +51,69 @@ export const ModalCreateUpdatePatient = ({ form }: Props) => {
       <Divider />
 
       <DialogContent>
-        <form>
-          <Grid container spacing={2}>
-            <Grid size={12}>
-              <TextField
-                label="Nome"
-                fullWidth
-                required
-                {...register('name')}
-              />
-            </Grid>
-            <Grid size={12}>
-              <TextField
-                label="Email"
-                fullWidth
-                required
-                type="email"
-                {...register('email')}
-              />
-            </Grid>
-            <Grid size={6}>
-              <DateInput
-                control={control}
-                label="Data de Nascimento"
-                variant="outlined"
-                name="dateOfBirth"
-              />
-            </Grid>
-            <Grid size={6}>
-              <PhoneInput
-                control={control}
-                label="Telefone"
-                name="phoneNumber"
-                phoneType="mobileNumber"
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={12}>
-              <TextField {...register('address')} label="Endereço" fullWidth />
-            </Grid>
-
-            <Grid size={12}>
-              <LoadingButton variant="contained">Cadastrar</LoadingButton>
-            </Grid>
+        <Grid container spacing={2}>
+          <Grid size={12}>
+            <TextField
+              label="Nome"
+              fullWidth
+              required
+              {...register('name')}
+              error={!!errors.name}
+              helperText={errors.name?.message as string}
+            />
           </Grid>
-        </form>
+          <Grid size={12}>
+            <TextField
+              label="Email"
+              fullWidth
+              required
+              type="email"
+              {...register('email')}
+              error={!!errors.email}
+              helperText={errors.email?.message as string}
+            />
+          </Grid>
+          <Grid size={6}>
+            <DateInput
+              control={control}
+              label="Data de Nascimento"
+              variant="outlined"
+              name="dateOfBirth"
+              error={!!errors.dateOfBirth}
+            />
+          </Grid>
+          <Grid size={6}>
+            <PhoneInput
+              control={control}
+              label="Telefone"
+              name="phoneNumber"
+              phoneType="mobileNumber"
+              fullWidth
+              error={!!errors.phoneNumber}
+              helperText={errors.phoneNumber?.message as string}
+            />
+          </Grid>
+
+          <Grid size={12}>
+            <TextField
+              {...register('address')}
+              label="Endereço"
+              fullWidth
+              error={!!errors.address}
+              helperText={errors.address?.message as string}
+            />
+          </Grid>
+
+          <Grid size={12}>
+            <LoadingButton
+              variant="contained"
+              loading={loading}
+              onClick={onSubmit}
+            >
+              Cadastrar
+            </LoadingButton>
+          </Grid>
+        </Grid>
       </DialogContent>
     </Dialog>
   );

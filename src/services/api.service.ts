@@ -17,7 +17,7 @@ export const HttpStatus = {
 } as const;
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: '/api',
   timeout: 60 * 1000,
   headers: {
     'Content-Type': 'application/json',

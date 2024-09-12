@@ -8,7 +8,11 @@ export function useToast() {
     type?: VariantType;
     options?: OptionsObject;
   }) => {
-    return enqueueSnackbar(msg.title, { variant: msg.type, ...msg.options });
+    return enqueueSnackbar(msg.title, {
+      variant: msg.type,
+      ...msg.options,
+      style: { fontFamily: 'cursive' },
+    });
   };
   return { toast };
 }

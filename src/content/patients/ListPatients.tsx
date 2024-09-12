@@ -21,34 +21,16 @@ import {
   VisibilityTwoTone,
 } from '@mui/icons-material';
 import { Patient } from '@/models';
+import { format } from 'date-fns';
 
 interface ListPatientsProps {
   data: Patient[];
   onEdit?: (item: string) => void;
+  onVisibility?: (item: Patient) => void;
 }
 
-export const ListPacients: FC<ListPatientsProps> = ({ data }) => {
+export const ListPacients: FC<ListPatientsProps> = ({ data, onVisibility }) => {
   const theme = useTheme();
-  // const theme = useTheme();
-  // const modal = useModal();
-  // const { toast } = useToast();
-
-  // const onDelete = async (id: string) => {
-  //   try {
-  //     modal.updateModalButton({ index: 1, loading: true });
-  //     refetch();
-  //     toast({
-  //       type: 'success',
-  //       title: 'Campanha deletada com sucesso',
-  //     });
-  //     modal.close();
-  //   } catch (error) {
-  //     toast({
-  //       type: 'error',
-  //       title: `Erro ao deletar campanha ${error}`,
-  //     });
-  //   }
-  // };
 
   return (
     <>
@@ -86,7 +68,7 @@ export const ListPacients: FC<ListPatientsProps> = ({ data }) => {
                       gutterBottom
                       noWrap
                     >
-                      {item.dateOfBirth}
+                      {format(new Date(item.dateOfBirth), 'dd/MM/yyyy')}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -122,6 +104,7 @@ export const ListPacients: FC<ListPatientsProps> = ({ data }) => {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={() => onVisibility(item)}
                       >
                         <VisibilityTwoTone fontSize="small" />
                       </IconButton>

@@ -7,6 +7,7 @@ import { Router } from 'next/router';
 import nProgress from 'nprogress';
 import Head from 'next/head';
 import ThemeProvider from '@/theme/ThemeProvider';
+import { SnackbarProvider } from 'notistack';
 
 export default function RootLayout({
   children,
@@ -29,9 +30,14 @@ export default function RootLayout({
         />
       </Head>
       <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <body>{children}</body>
-        </QueryClientProvider>
+        <SnackbarProvider
+          maxSnack={6}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <QueryClientProvider client={queryClient}>
+            <body>{children}</body>
+          </QueryClientProvider>
+        </SnackbarProvider>
       </ThemeProvider>
     </html>
   );
