@@ -1,12 +1,13 @@
 'use client';
 
 import Loader from '@/components/Loader/Loader';
+import { ModalDelete } from '@/components/ModalDelete';
 import PageTitleWrapper from '@/components/PageTitleWrapper';
 import { HeaderPatienties, ListPacients } from '@/content/patients';
 import { ModalCreateUpdatePatient } from '@/content/patients/ModalCreateUpdatePatient';
 import { ModalVisibility } from '@/content/patients/ModalVisibilityPatient';
 import { validationSchemaPatient } from '@/content/patients/validation.schema';
-import { useToast } from '@/contexts';
+import { useModal, useToast } from '@/contexts';
 import { Patient } from '@/models';
 import { PatientsApi } from '@/services';
 import { removeNotNumbers } from '@/utils';
@@ -26,6 +27,7 @@ export default function PatientsPage() {
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
+  const modal = useModal();
 
   const {
     data: patients,
@@ -83,7 +85,11 @@ export default function PatientsPage() {
         phoneNumber: removeNotNumbers(data.phoneNumber),
       };
 
-      await PatientsApi.save(createPayload);
+      if (isEditable) {
+        await PatientsApi.update({ ...createPayload, id: patient.id });
+      } else {
+        await PatientsApi.save(createPayload);
+      }
 
       refetch();
       setOpenModalCreateUpdate(false);
@@ -103,6 +109,46 @@ export default function PatientsPage() {
     }
   };
 
+  const onDelete = async (id: string) => {
+    try {
+      modal.updateModalButton({ index: 1, loading: true });
+      await PatientsApi.remove(id);
+      refetch();
+      toast({
+        type: 'success',
+        title: 'Entidade deletada com sucesso',
+      });
+      modal.close();
+    } catch (error) {
+      toast({
+        type: 'error',
+        title: `Erro ao deletar entidade ${error}`,
+      });
+    }
+  };
+
+  const renderModalDelete = (id: string) => {
+    modal.open({
+      // maxWidth: 'xs',
+      title: 'Deletar paciente',
+      description: <ModalDelete />,
+      buttons: [
+        {
+          text: 'Cancelar',
+          variant: 'text',
+          color: 'error',
+          onClick: modal.close,
+        },
+        {
+          text: 'Confirmar',
+          variant: 'contained',
+          color: 'success',
+          onClick: () => onDelete(id),
+        },
+      ],
+    });
+  };
+
   let content = <Loader />;
 
   if (isError)
@@ -114,6 +160,7 @@ export default function PatientsPage() {
         data={patients.Items}
         onEdit={(e) => handleOpenModalUpdate(e)}
         onVisibility={(e) => handleOpenModalVisibility(e)}
+        onDelete={(e) => renderModalDelete(e)}
       />
     );
 

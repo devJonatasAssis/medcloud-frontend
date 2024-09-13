@@ -8,6 +8,7 @@ import nProgress from 'nprogress';
 import Head from 'next/head';
 import ThemeProvider from '@/theme/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
+import { ModalProvider } from '@/contexts';
 
 export default function RootLayout({
   children,
@@ -30,14 +31,16 @@ export default function RootLayout({
         />
       </Head>
       <ThemeProvider>
-        <SnackbarProvider
-          maxSnack={6}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        >
-          <QueryClientProvider client={queryClient}>
-            <body>{children}</body>
-          </QueryClientProvider>
-        </SnackbarProvider>
+        <ModalProvider>
+          <SnackbarProvider
+            maxSnack={6}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          >
+            <QueryClientProvider client={queryClient}>
+              <body>{children}</body>
+            </QueryClientProvider>
+          </SnackbarProvider>
+        </ModalProvider>
       </ThemeProvider>
     </html>
   );

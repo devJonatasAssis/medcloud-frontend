@@ -22,19 +22,26 @@ import {
 } from '@mui/icons-material';
 import { Patient } from '@/models';
 import { format } from 'date-fns';
+import { useModal, useToast } from '@/contexts';
+import { ModalDelete } from '@/components/ModalDelete';
+import { PatientsApi } from '@/services';
 
 interface ListPatientsProps {
   data: Patient[];
   onEdit: (item: Patient) => void;
   onVisibility: (item: Patient) => void;
+  onDelete: (id: string) => void;
 }
 
 export const ListPacients: FC<ListPatientsProps> = ({
   data,
   onVisibility,
   onEdit,
+  onDelete,
 }) => {
   const theme = useTheme();
+  const modal = useModal();
+  const { toast } = useToast();
 
   return (
     <>
@@ -138,7 +145,7 @@ export const ListPacients: FC<ListPatientsProps> = ({
                         }}
                         color="inherit"
                         size="small"
-                        // onClick={() => onEdit(item)}
+                        onClick={() => onDelete(item.id)}
                       >
                         <DeleteTwoTone fontSize="small" />
                       </IconButton>
