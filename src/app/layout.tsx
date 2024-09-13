@@ -9,6 +9,7 @@ import Head from 'next/head';
 import ThemeProvider from '@/theme/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
 import { ModalProvider } from '@/contexts';
+import { CacheProvider } from '@emotion/react';
 
 export default function RootLayout({
   children,
@@ -22,7 +23,7 @@ export default function RootLayout({
   Router.events.on('routeChangeComplete', nProgress.done);
 
   return (
-    <html>
+    <html lang="pt">
       <Head>
         <title>Medcloud</title>
         <meta
@@ -31,16 +32,16 @@ export default function RootLayout({
         />
       </Head>
       <ThemeProvider>
-        <ModalProvider>
-          <SnackbarProvider
-            maxSnack={6}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          >
-            <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ModalProvider>
+            <SnackbarProvider
+              maxSnack={6}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
               <body>{children}</body>
-            </QueryClientProvider>
-          </SnackbarProvider>
-        </ModalProvider>
+            </SnackbarProvider>
+          </ModalProvider>
+        </QueryClientProvider>
       </ThemeProvider>
     </html>
   );

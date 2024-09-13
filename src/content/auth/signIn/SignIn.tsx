@@ -13,9 +13,22 @@ import {
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { validationSchemaSignIn } from './validation.schema';
+import {
+  AuthenticationDetails,
+  CognitoUser,
+  CognitoUserPool,
+} from 'amazon-cognito-identity-js';
+import { poolData } from '@/config/cognito';
+import { useToast } from '@/contexts';
+import { useState } from 'react';
+
+const userPool = new CognitoUserPool(poolData);
 
 export const SignIn = () => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
+
   const {
     register,
     getValues,
@@ -29,17 +42,48 @@ export const SignIn = () => {
 
   const handleLogin = async () => {
     const data = getValues();
-    try {
-      console.log(data);
 
+    try {
       await trigger(undefined, { shouldFocus: true });
 
       if (!isValid) {
         return;
       }
 
-      router.replace('/pacientes');
-    } catch (error) {}
+      const userData = {
+        Username: data.email,
+        Pool: userPool,
+      };
+
+      const authenticationDetails = new AuthenticationDetails({
+        Username: data.email,
+        Password: data.password,
+      });
+
+      const cognitoUser = new CognitoUser(userData);
+
+      cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: async (result) => {
+          const accessToken = result.getAccessToken().getJwtToken();
+          localStorage.setItem('accessToken', accessToken);
+          toast({
+            type: 'success',
+            title: 'Autenticação realizada com sucesso',
+          });
+          router.replace('/pacientes');
+        },
+        onFailure: (err) => {
+          toast({
+            type: 'error',
+            title: 'Email ou senha incorretos.',
+          });
+          console.error(err);
+        },
+      });
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -100,6 +144,7 @@ export const SignIn = () => {
               size="large"
               sx={{ borderRadius: 2 }}
               onClick={handleLogin}
+              loading={loading}
             >
               Entrar
             </LoadingButton>

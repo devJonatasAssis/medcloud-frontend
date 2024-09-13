@@ -11,7 +11,6 @@ export function useToast() {
     return enqueueSnackbar(msg.title, {
       variant: msg.type,
       ...msg.options,
-      style: { fontFamily: 'cursive' },
     });
   };
   return { toast };

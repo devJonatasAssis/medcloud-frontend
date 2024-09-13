@@ -22,9 +22,6 @@ import {
 } from '@mui/icons-material';
 import { Patient } from '@/models';
 import { format } from 'date-fns';
-import { useModal, useToast } from '@/contexts';
-import { ModalDelete } from '@/components/ModalDelete';
-import { PatientsApi } from '@/services';
 
 interface ListPatientsProps {
   data: Patient[];
@@ -40,8 +37,6 @@ export const ListPacients: FC<ListPatientsProps> = ({
   onDelete,
 }) => {
   const theme = useTheme();
-  const modal = useModal();
-  const { toast } = useToast();
 
   return (
     <>

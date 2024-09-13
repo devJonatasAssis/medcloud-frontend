@@ -1,5 +1,6 @@
 'use client';
 
+import { Header } from '@/components/Header';
 import Loader from '@/components/Loader/Loader';
 import { ModalDelete } from '@/components/ModalDelete';
 import PageTitleWrapper from '@/components/PageTitleWrapper';
@@ -169,6 +170,10 @@ export default function PatientsPage() {
       <Head>
         <title>Pacientes - Medcloud</title>
       </Head>
+
+      <Box paddingX={10} marginTop={10}>
+        <Header />
+      </Box>
 
       <Box padding={10}>
         <PageTitleWrapper>
