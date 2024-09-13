@@ -19,8 +19,9 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function PatientsPage() {
-  const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [openModalCreateUpdate, setOpenModalCreateUpdate] = useState(false);
   const [openModalVisibility, setOpenModalVisibility] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
   const [patient, setPatient] = useState<Patient>({} as null);
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +48,14 @@ export default function PatientsPage() {
   } = form;
 
   const handleOpenModalCreate = () => {
-    setOpenModalCreate(true);
+    setOpenModalCreateUpdate(true);
+    setIsEditable(false);
+  };
+
+  const handleOpenModalUpdate = (e: Patient) => {
+    setOpenModalCreateUpdate(true);
+    setPatient(e);
+    setIsEditable(true);
   };
 
   const handleOpenModalVisibility = (e: Patient) => {
@@ -78,7 +86,7 @@ export default function PatientsPage() {
       await PatientsApi.save(createPayload);
 
       refetch();
-      setOpenModalCreate(false);
+      setOpenModalCreateUpdate(false);
 
       toast({
         type: 'success',
@@ -104,6 +112,7 @@ export default function PatientsPage() {
     content = (
       <ListPacients
         data={patients.Items}
+        onEdit={(e) => handleOpenModalUpdate(e)}
         onVisibility={(e) => handleOpenModalVisibility(e)}
       />
     );
@@ -122,11 +131,17 @@ export default function PatientsPage() {
         {content}
       </Box>
 
-      {openModalCreate && (
+      {openModalCreateUpdate && (
         <ModalCreateUpdatePatient
           form={form}
           loading={loading}
           onSubmit={handleSubmit}
+          editable={isEditable}
+          item={patient}
+          onClose={() => {
+            setOpenModalCreateUpdate(false);
+            setIsEditable(false);
+          }}
         />
       )}
 

@@ -1,5 +1,6 @@
 import { DateInput } from '@/components/DateInput';
 import { PhoneInput } from '@/components/PhoneInput';
+import { Patient } from '@/models';
 import { Close } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
@@ -13,25 +14,48 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 interface Props {
   form: UseFormReturn;
-  onSubmit: () => void;
   loading: boolean;
+  editable: boolean;
+  item: Patient;
+  onSubmit: () => void;
+  onClose: () => void;
 }
 
 export const ModalCreateUpdatePatient = ({
   form,
-  onSubmit,
   loading,
+  editable,
+  item,
+  onSubmit,
+  onClose,
 }: Props) => {
   const {
     register,
     control,
-    handleSubmit,
     formState: { errors },
+    setValue,
   } = form;
+
+  useEffect(() => {
+    if (editable) {
+      setValue('name', item.name);
+      setValue('email', item.email);
+      setValue('dateOfBirth', item.dateOfBirth);
+      setValue('phoneNumber', item.phoneNumber);
+      setValue('address', item.address);
+    } else {
+      setValue('name', undefined);
+      setValue('email', undefined);
+      setValue('dateOfBirth', undefined);
+      setValue('phoneNumber', undefined);
+      setValue('address', undefined);
+    }
+  }, [editable, setValue]);
 
   return (
     <Dialog open fullWidth>
@@ -43,7 +67,7 @@ export const ModalCreateUpdatePatient = ({
         }}
       >
         <Typography>Formulário de Paciente</Typography>
-        <IconButton>
+        <IconButton onClick={onClose}>
           <Close />
         </IconButton>
       </DialogTitle>
@@ -110,7 +134,7 @@ export const ModalCreateUpdatePatient = ({
               loading={loading}
               onClick={onSubmit}
             >
-              Cadastrar
+              {editable ? 'Salvar modificações' : 'Salvar'}
             </LoadingButton>
           </Grid>
         </Grid>

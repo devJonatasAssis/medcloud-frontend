@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import {
   Card,
   Table,
@@ -25,11 +25,15 @@ import { format } from 'date-fns';
 
 interface ListPatientsProps {
   data: Patient[];
-  onEdit?: (item: string) => void;
-  onVisibility?: (item: Patient) => void;
+  onEdit: (item: Patient) => void;
+  onVisibility: (item: Patient) => void;
 }
 
-export const ListPacients: FC<ListPatientsProps> = ({ data, onVisibility }) => {
+export const ListPacients: FC<ListPatientsProps> = ({
+  data,
+  onVisibility,
+  onEdit,
+}) => {
   const theme = useTheme();
 
   return (
@@ -119,6 +123,7 @@ export const ListPacients: FC<ListPatientsProps> = ({ data, onVisibility }) => {
                         }}
                         color="inherit"
                         size="small"
+                        onClick={() => onEdit(item)}
                       >
                         <EditTwoTone fontSize="small" />
                       </IconButton>
