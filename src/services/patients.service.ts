@@ -18,9 +18,16 @@ interface UpdateProps {
   phoneNumber: string;
 }
 
-const getPatients = async () => {
-  const response = await api.get('/patients');
-  return response.data;
+const getPatients = async (startLink = null) => {
+  try {
+    const response = await api.get('/patients', {
+      params: startLink ? { startLink } : {}, // Só adiciona o parâmetro se houver startLink
+    });
+    return response.data; // Certifique-se de que a API retorna o campo correto
+  } catch (error) {
+    console.error('Erro ao buscar pacientes:', error);
+    throw error; // Garante que o erro seja capturado no front-end
+  }
 };
 
 const save = async (payload: SaveProps) => {

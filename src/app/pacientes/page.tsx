@@ -13,7 +13,7 @@ import { Patient } from '@/models';
 import { PatientsApi } from '@/services';
 import { removeNotNumbers } from '@/utils';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Typography } from '@mui/material';
+import { Box, Pagination, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import { useState } from 'react';
@@ -21,6 +21,9 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function PatientsPage() {
+  const [page, setPage] = useState(1);
+  const [startLinkHistory, setStartLinkHistory] = useState([]);
+  const [currentStartLink, setCurrentStartLink] = useState(null);
   const [openModalCreateUpdate, setOpenModalCreateUpdate] = useState(false);
   const [openModalVisibility, setOpenModalVisibility] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
@@ -36,8 +39,8 @@ export default function PatientsPage() {
     isSuccess,
     refetch,
   } = useQuery({
-    queryKey: ['getPatients'],
-    queryFn: () => PatientsApi.getPatients(),
+    queryKey: ['getPatients', currentStartLink],
+    queryFn: () => PatientsApi.getPatients(currentStartLink),
   });
 
   const form = useForm({
@@ -130,7 +133,6 @@ export default function PatientsPage() {
 
   const renderModalDelete = (id: string) => {
     modal.open({
-      // maxWidth: 'xs',
       title: 'Deletar paciente',
       description: <ModalDelete />,
       buttons: [
@@ -150,6 +152,21 @@ export default function PatientsPage() {
     });
   };
 
+  const onPagination = (_, value: number) => {
+    if (value > page) {
+      if (patients?.lastEvaluatedKey) {
+        setStartLinkHistory((prev) => [...prev, currentStartLink]);
+        setCurrentStartLink(patients.lastEvaluatedKey);
+        setPage(value);
+      }
+    } else if (value < page && startLinkHistory.length > 0) {
+      const previousStartLink = startLinkHistory[startLinkHistory.length - 1];
+      setCurrentStartLink(previousStartLink);
+      setStartLinkHistory((prev) => prev.slice(0, -1));
+      setPage(value);
+    }
+  };
+
   let content = <Loader />;
 
   if (isError)
@@ -157,12 +174,26 @@ export default function PatientsPage() {
 
   if (isSuccess)
     content = (
-      <ListPacients
-        data={patients.Items}
-        onEdit={(e) => handleOpenModalUpdate(e)}
-        onVisibility={(e) => handleOpenModalVisibility(e)}
-        onDelete={(e) => renderModalDelete(e)}
-      />
+      <Box>
+        <ListPacients
+          data={patients.items}
+          onEdit={(e) => handleOpenModalUpdate(e)}
+          onVisibility={(e) => handleOpenModalVisibility(e)}
+          onDelete={(e) => renderModalDelete(e)}
+        />
+
+        <Box p={3} display="flex" justifyContent="center">
+          <Pagination
+            shape="rounded"
+            size="large"
+            variant="outlined"
+            color="primary"
+            count={Math.ceil(patients.total / 5)} // Número total de páginas
+            page={page}
+            onChange={onPagination}
+          />
+        </Box>
+      </Box>
     );
 
   return (
