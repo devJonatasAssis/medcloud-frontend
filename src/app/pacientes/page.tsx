@@ -9,6 +9,8 @@ import { ModalCreateUpdatePatient } from '@/content/patients/ModalCreateUpdatePa
 import { ModalVisibility } from '@/content/patients/ModalVisibilityPatient';
 import { validationSchemaPatient } from '@/content/patients/validation.schema';
 import { useModal, useToast } from '@/contexts';
+import { useAuth } from '@/contexts/authContext';
+import withAuth from '@/middlewares/withAuth';
 import { Patient } from '@/models';
 import { PatientsApi } from '@/services';
 import { removeNotNumbers } from '@/utils';
@@ -20,7 +22,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function PatientsPage() {
+function PatientsPage() {
   const [page, setPage] = useState(1);
   const [startLinkHistory, setStartLinkHistory] = useState([]);
   const [currentStartLink, setCurrentStartLink] = useState(null);
@@ -32,6 +34,9 @@ export default function PatientsPage() {
 
   const { toast } = useToast();
   const modal = useModal();
+  const { isAuthenticated } = useAuth();
+
+  console.log(isAuthenticated);
 
   const {
     data: patients,
@@ -237,3 +242,5 @@ export default function PatientsPage() {
     </>
   );
 }
+
+export default withAuth(PatientsPage);

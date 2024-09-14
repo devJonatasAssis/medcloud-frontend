@@ -4,30 +4,23 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Lock } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
+  Alert,
   Card,
   CardContent,
   Grid2 as Grid,
   TextField,
   Typography,
 } from '@mui/material';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { validationSchemaSignIn } from './validation.schema';
-import {
-  AuthenticationDetails,
-  CognitoUser,
-  CognitoUserPool,
-} from 'amazon-cognito-identity-js';
-import { poolData } from '@/config/cognito';
-import { useToast } from '@/contexts';
 import { useState } from 'react';
-
-const userPool = new CognitoUserPool(poolData);
+import { useAuth } from '@/contexts/authContext';
+import { useRouter } from 'next/navigation';
 
 export const SignIn = () => {
   const [loading, setLoading] = useState(false);
+  const { signIn, isAuthenticated } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
 
   const {
     register,
@@ -51,49 +44,16 @@ export const SignIn = () => {
         return;
       }
 
-      const userData = {
-        Username: data.email,
-        Pool: userPool,
-      };
+      await signIn(data.email, data.password);
 
-      const authenticationDetails = new AuthenticationDetails({
-        Username: data.email,
-        Password: data.password,
-      });
-
-      const cognitoUser = new CognitoUser(userData);
-
-      const startTime = Date.now();
-
-      cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: async (result) => {
-          const accessToken = result.getAccessToken().getJwtToken();
-          localStorage.setItem('accessToken', accessToken);
-          toast({
-            type: 'success',
-            title: 'Autenticação realizada com sucesso',
-          });
-          const elapsedTime = Date.now() - startTime; // Calcula o tempo que levou
-          const delay = Math.max(0, 1000 - elapsedTime); // Garante pelo menos 1 segundo de loading
-          setTimeout(() => {
-            setLoading(false); // Espera o delay para desligar o loading
-            router.replace('/pacientes');
-          }, delay);
-        },
-        onFailure: (err) => {
-          toast({
-            type: 'error',
-            title: 'Email ou senha incorretos.',
-          });
-        },
-      });
+      router.replace('/pacientes');
     } catch (error) {
       setLoading(false);
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  console.log('Loading state:', loading);
 
   return (
     <Card sx={{ maxWidth: 500, p: 2 }}>
@@ -148,15 +108,22 @@ export const SignIn = () => {
             mt={2}
           >
             <LoadingButton
-              variant="outlined"
+              variant="contained"
               startIcon={<Lock />}
               size="large"
-              sx={{ borderRadius: 2 }}
               onClick={handleLogin}
               loading={loading}
+              fullWidth
             >
               Entrar
             </LoadingButton>
+          </Grid>
+
+          <Grid size={12} mt={2}>
+            <Alert severity="warning">
+              Use o email <strong>devjonatasassis@gmail.com</strong> e a senha{' '}
+              <strong>@Teste1234</strong> para acessar.
+            </Alert>
           </Grid>
         </Grid>
       </CardContent>

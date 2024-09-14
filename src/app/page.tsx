@@ -3,9 +3,8 @@ import Image from 'next/image';
 import logo from '../assets/logo.png';
 import { SignIn } from '../content/auth/signIn/SignIn';
 import { Box } from '@mui/material';
-import Head from 'next/head';
 
-export default function Home() {
+function Home() {
   return (
     <>
       <Box
@@ -24,3 +23,5 @@ export default function Home() {
     </>
   );
 }
+
+export default Home;

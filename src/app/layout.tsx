@@ -2,20 +2,16 @@
 
 import './globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Router } from 'next/router';
 import nProgress from 'nprogress';
 import Head from 'next/head';
 import ThemeProvider from '@/theme/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
 import { ModalProvider } from '@/contexts';
-import { CacheProvider } from '@emotion/react';
+import { AuthProvider } from '@/contexts/authContext';
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
@@ -31,7 +27,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="pt">
+    <html>
       <Head>
         <title>Medcloud</title>
         <meta
@@ -42,14 +38,16 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <QueryClientProvider client={queryClient}>
-            <ModalProvider>
-              <SnackbarProvider
-                maxSnack={6}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              >
-                {children}
-              </SnackbarProvider>
-            </ModalProvider>
+            <AuthProvider>
+              <ModalProvider>
+                <SnackbarProvider
+                  maxSnack={6}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                  {children}
+                </SnackbarProvider>
+              </ModalProvider>
+            </AuthProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </body>
