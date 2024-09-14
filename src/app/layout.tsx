@@ -2,7 +2,7 @@
 
 import './globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Router } from 'next/router';
 import nProgress from 'nprogress';
 import Head from 'next/head';
@@ -18,9 +18,17 @@ export default function RootLayout({
 }>) {
   const [queryClient] = useState(() => new QueryClient());
 
-  Router.events.on('routeChangeStart', nProgress.start);
-  Router.events.on('routeChangeError', nProgress.done);
-  Router.events.on('routeChangeComplete', nProgress.done);
+  useEffect(() => {
+    Router.events.on('routeChangeStart', nProgress.start);
+    Router.events.on('routeChangeError', nProgress.done);
+    Router.events.on('routeChangeComplete', nProgress.done);
+
+    return () => {
+      Router.events.off('routeChangeStart', nProgress.start);
+      Router.events.off('routeChangeError', nProgress.done);
+      Router.events.off('routeChangeComplete', nProgress.done);
+    };
+  }, []);
 
   return (
     <html lang="pt">
@@ -31,18 +39,20 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
       </Head>
-      <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <ModalProvider>
-            <SnackbarProvider
-              maxSnack={6}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-              <body>{children}</body>
-            </SnackbarProvider>
-          </ModalProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
+      <body>
+        <ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <ModalProvider>
+              <SnackbarProvider
+                maxSnack={6}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              >
+                {children}
+              </SnackbarProvider>
+            </ModalProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

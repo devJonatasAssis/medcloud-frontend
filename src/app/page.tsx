@@ -8,9 +8,6 @@ import Head from 'next/head';
 export default function Home() {
   return (
     <>
-      <Head>
-        <title>Conectar-se - Medcloud</title>
-      </Head>
       <Box
         sx={{
           display: 'flex',

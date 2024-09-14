@@ -41,6 +41,7 @@ export const SignIn = () => {
   });
 
   const handleLogin = async () => {
+    setLoading(true);
     const data = getValues();
 
     try {
@@ -62,6 +63,8 @@ export const SignIn = () => {
 
       const cognitoUser = new CognitoUser(userData);
 
+      const startTime = Date.now();
+
       cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: async (result) => {
           const accessToken = result.getAccessToken().getJwtToken();
@@ -70,21 +73,27 @@ export const SignIn = () => {
             type: 'success',
             title: 'Autenticação realizada com sucesso',
           });
-          router.replace('/pacientes');
+          const elapsedTime = Date.now() - startTime; // Calcula o tempo que levou
+          const delay = Math.max(0, 1000 - elapsedTime); // Garante pelo menos 1 segundo de loading
+          setTimeout(() => {
+            setLoading(false); // Espera o delay para desligar o loading
+            router.replace('/pacientes');
+          }, delay);
         },
         onFailure: (err) => {
           toast({
             type: 'error',
             title: 'Email ou senha incorretos.',
           });
-          console.error(err);
         },
       });
     } catch (error) {
-    } finally {
       setLoading(false);
+      console.error(error);
     }
   };
+
+  console.log('Loading state:', loading);
 
   return (
     <Card sx={{ maxWidth: 500, p: 2 }}>

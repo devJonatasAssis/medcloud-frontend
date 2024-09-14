@@ -24,7 +24,7 @@ export default function PatientsPage() {
   const [openModalCreateUpdate, setOpenModalCreateUpdate] = useState(false);
   const [openModalVisibility, setOpenModalVisibility] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
-  const [patient, setPatient] = useState<Patient>({} as null);
+  const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();

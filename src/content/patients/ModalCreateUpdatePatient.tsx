@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 interface Props {
@@ -47,6 +47,7 @@ export const ModalCreateUpdatePatient = ({
       setValue('email', item.email);
       setValue('dateOfBirth', item.dateOfBirth);
       setValue('phoneNumber', item.phoneNumber);
+
       setValue('address', item.address);
     } else {
       setValue('name', undefined);
