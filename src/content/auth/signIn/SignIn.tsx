@@ -16,6 +16,7 @@ import { validationSchemaSignIn } from './validation.schema';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
+import { PasswordInput } from '@/components';
 
 export const SignIn = () => {
   const [loading, setLoading] = useState(false);
@@ -91,12 +92,11 @@ export const SignIn = () => {
             />
           </Grid>
           <Grid size={12}>
-            <TextField
-              {...register('password')}
+            <PasswordInput
+              register={register}
+              name="password"
               label="Senha"
-              fullWidth
               error={!!errors.password}
-              helperText={errors.password?.message}
             />
           </Grid>
 

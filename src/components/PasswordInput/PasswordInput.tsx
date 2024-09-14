@@ -17,7 +17,7 @@ interface Props<T extends FieldValues> {
   ) => void;
   onPaste?: React.ClipboardEventHandler<HTMLDivElement>;
   autoFocus?: boolean;
-  autoComplete: string;
+  autoComplete?: string;
 }
 
 export function PasswordInput<TFieldValues extends FieldValues>({
