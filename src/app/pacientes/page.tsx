@@ -125,13 +125,13 @@ function PatientsPage() {
       refetch();
       toast({
         type: 'success',
-        title: 'Entidade deletada com sucesso',
+        title: 'Paciente deletado com sucesso',
       });
       modal.close();
     } catch (error) {
       toast({
         type: 'error',
-        title: `Erro ao deletar entidade ${error}`,
+        title: `Erro ao deletar paciente ${error}`,
       });
     }
   };
