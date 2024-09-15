@@ -1,4 +1,4 @@
 export const poolData = {
-  UserPoolId: 'us-east-1_FOZTf6VPD',
-  ClientId: 'qt3e7kd5rb3cgjlojkkpuabiv',
+  UserPoolId: process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
+  ClientId: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
 };
